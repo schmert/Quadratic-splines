@@ -141,7 +141,7 @@ delta = .25
 interp_ages = seq(from=12+delta/2, to=56-delta/2, by=delta)
 
 #####################
-selected_schedules = sample( colnames(HFDmatrix), 10)
+selected_schedules = sample( colnames(HFDmatrix), 20)
 
 for (this_schedule in selected_schedules) {
   
@@ -159,7 +159,7 @@ for (this_schedule in selected_schedules) {
                      x=interp_ages, y=fx, 
                      method="BFGS", 
                      control=list(fnscale=initial.error,
-                                  parscale=rep(1,4))) 
+                                  parscale=rep(.10,4))) 
     
     results = rbind(results,
                     data.frame(sched  = this_schedule, 
