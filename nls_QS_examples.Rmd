@@ -1,7 +1,7 @@
 ---
 title: "Quadratic Spline Interpolation of Fertility Schedules"
 author: "Carl Schmertmann"
-date: "28 Nov 2018"
+date: "29 Nov 2018"
 output:
   html_document: default
   word_document: default
@@ -21,6 +21,7 @@ The main idea is to find a continuous function (specifically, a restricted quadr
 3. $P$ : the age at which fertility reaches its peak value $R$
 4. $H$ : the age $>P$ at which fertility falls to half its peak value, $R/2$.
 
+**This version** of the program uses the *nls()* function in R.
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
@@ -156,9 +157,7 @@ for (this_schedule in selected_schedules) {
     
     
     ## find optimal R, P & H params for QS
-    this.result <- nls(error_formula, 
-                       start=init_param,
-                       trace=TRUE)
+    this.result <- nls(error_formula, start=init_param)
     
     results = rbind(results,
                     data.frame(sched  = this_schedule, 
@@ -170,16 +169,18 @@ for (this_schedule in selected_schedules) {
     
     
     #-------- plot --------------
-    yhat   = QS(alpha=15, R=this.result$par['R'], P=this.result$par['P'], H=this.result$par['H'])
+    yhat   = QS(alpha= coef(this.result)['alpha'], 
+                R    = coef(this.result)['R'], 
+                P    = coef(this.result)['P'], 
+                H    = coef(this.result)['H'])
 
 
-    plot( x, yhat, type='o', main=this_schedule, pch=16, cex=.60,
+    plot( x, yhat, type='o', main=this_schedule, pch=16, cex=.50,
           ylim=range(0,yhat,fx))
     
-    L = seq(12,55,1)
-    segments(L, fx, L+1,  fx, col=2, lwd=2)
-    segments(L,     0, L  , fx, col=2, lwd=2)
-    segments(L+1,   0, L+1, fx, col=2, lwd=2)
+    segments(a,    fx, a+n, fx, col='plum', lwd=2)
+    segments(a,     0, a  , fx, col='plum', lwd=2)
+    segments(a+n,   0, a+n, fx, col='plum', lwd=2)
 
 } # for this_schedule
 ```
