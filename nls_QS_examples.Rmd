@@ -136,18 +136,19 @@ results = data.frame(country = character(),
                      H       = numeric())
 ```
 
-## Calculate and plot least-squares estimates of QS parameters for 10 random HFD schedules
+## Calculate and plot least-squares estimates of QS parameters for 50 random HFD schedules
 
 ```{r}
 
 
 #####################
-selected_schedules = sample( colnames(HFDmatrix), 20)
+selected_schedules = sample( colnames(HFDmatrix), 50)
 
 error_formula = formula( fx ~ I( G %*% QS(R,alpha,P,H) ) ) 
 
 for (this_schedule in selected_schedules) {
   
+  try({
     fx <- HFDmatrix[, this_schedule]  
 
     ## INITIAL ESTIMATES OF PARAMETERS using MAC for P
@@ -182,6 +183,7 @@ for (this_schedule in selected_schedules) {
     segments(a,     0, a  , fx, col='plum', lwd=2)
     segments(a+n,   0, a+n, fx, col='plum', lwd=2)
 
+  })
 } # for this_schedule
 ```
 
