@@ -1,0 +1,25 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1628282530478.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3757363935",
+    "id" : "9CF6C5FB",
+    "lastKnownWriteTime" : 1628285458,
+    "last_content_update" : 1628285458278,
+    "path" : "~/GitHub/Quadratic-splines/quadratic-spline-fertility-fit/app.R",
+    "project_path" : "quadratic-spline-fertility-fit/app.R",
+    "properties" : {
+        "cursorPosition" : "51,81",
+        "scrollLine" : "25"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}
