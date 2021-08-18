@@ -1,24 +1,24 @@
 {
     "collab_server" : "",
     "contents" : "",
-    "created" : 1628280825986.000,
+    "created" : 1629311764997.000,
     "dirty" : false,
     "encoding" : "UTF-8",
     "folds" : "",
-    "hash" : "0",
-    "id" : "B505CFD4",
+    "hash" : "3123964673",
+    "id" : "92301D92",
     "lastKnownWriteTime" : 1628282404,
-    "last_content_update" : 1628282404559,
+    "last_content_update" : 1628282404,
     "path" : "~/GitHub/Quadratic-splines/QS-function.R",
     "project_path" : "QS-function.R",
     "properties" : {
-        "cursorPosition" : "21,40",
-        "scrollLine" : "15"
+        "cursorPosition" : "60,20",
+        "scrollLine" : "49"
     },
     "read_only" : false,
     "read_only_alternatives" : [
     ],
-    "relative_order" : 1,
+    "relative_order" : 2,
     "source_on_save" : false,
     "source_window" : "",
     "type" : "r_source"

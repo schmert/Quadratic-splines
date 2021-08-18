@@ -1,0 +1,26 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1629312534286.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "2841474056",
+    "id" : "476F6518",
+    "lastKnownWriteTime" : 1629312671,
+    "last_content_update" : 1629312671,
+    "path" : "~/GitHub/Quadratic-splines/reactive-example-app.R",
+    "project_path" : "reactive-example-app.R",
+    "properties" : {
+        "cursorPosition" : "6,1",
+        "scrollLine" : "0",
+        "tempName" : "Untitled1"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 3,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}
