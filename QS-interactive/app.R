@@ -43,7 +43,7 @@ ui <- fluidPage(
         # Show a plot of the generated distribution
         mainPanel(
            plotOutput("fx_plot"),
-           textOutput("txt")
+           tableOutput("coef_table")
         )
     )
 )
@@ -100,6 +100,9 @@ QS_calc = function(x, alpha, P, H, R) {
   x  = as.vector(x)
   fx = as.vector(y)
   
+  # calculate the a,b,c for each section in  [a x^2 + b x + c] form
+  
+    
   return(list( x=x, fx=fx, knot=knot, theta=theta, beta=beta))
 } #QS
 
@@ -116,7 +119,6 @@ server <- function(input, output) {
                             input$H, 
                             input$R) )
   
-  output$txt = renderText({ round(QS()$beta,2) })
 
     output$fx_plot <- renderPlot({
 
@@ -169,7 +171,18 @@ server <- function(input, output) {
         print(G)
 
     })
+
+
     
+    output$coef_table = renderTable({ 
+      df = tibble( 
+        k     = format( c(0,seq( QS()$knot )), digits=0),
+        Knot  = sprintf('%.3f',c( QS()$knot, QS()$beta)), 
+        Coef =  c(sprintf('%+.4f', QS()$theta), '--'))
+      
+      df
+      })
+  
 }
 
 # Run the application ----

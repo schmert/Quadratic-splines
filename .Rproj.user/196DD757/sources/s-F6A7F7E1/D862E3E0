@@ -1,0 +1,26 @@
+{
+    "id": "D862E3E0",
+    "path": "~/GitHub/Quadratic-splines/QS-interactive/app.R",
+    "project_path": "QS-interactive/app.R",
+    "type": "r_source",
+    "hash": "2245986015",
+    "contents": "",
+    "dirty": false,
+    "created": 1629315398228.0,
+    "source_on_save": false,
+    "relative_order": 1,
+    "properties": {
+        "source_window_id": "",
+        "Source": "Source",
+        "cursorPosition": "182,8",
+        "scrollLine": "119"
+    },
+    "folds": "122|34|172|4|\n",
+    "lastKnownWriteTime": 1629382245,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1629382245830,
+    "read_only": false,
+    "read_only_alternatives": []
+}

@@ -1,26 +1,26 @@
 {
-    "id": "D862E3E0",
-    "path": "~/GitHub/Quadratic-splines/QS-interactive/app.R",
-    "project_path": "QS-interactive/app.R",
+    "id": "7FE6B9F3",
+    "path": "~/GitHub/Quadratic-splines/reactive-example-app.R",
+    "project_path": "reactive-example-app.R",
     "type": "r_source",
     "hash": "0",
     "contents": "",
     "dirty": false,
-    "created": 1629315398228.0,
+    "created": 1629320500780.0,
     "source_on_save": false,
-    "relative_order": 1,
+    "relative_order": 2,
     "properties": {
         "source_window_id": "",
         "Source": "Source",
-        "cursorPosition": "132,39",
-        "scrollLine": "121"
+        "cursorPosition": "14,2",
+        "scrollLine": "0"
     },
     "folds": "",
-    "lastKnownWriteTime": 1629322664,
+    "lastKnownWriteTime": 1629312671,
     "encoding": "UTF-8",
     "collab_server": "",
     "source_window": "",
-    "last_content_update": 1629322664846,
+    "last_content_update": 1629312671,
     "read_only": false,
     "read_only_alternatives": []
 }
