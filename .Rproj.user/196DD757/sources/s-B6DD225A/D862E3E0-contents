@@ -42,7 +42,8 @@ ui <- fluidPage(
 
         # Show a plot of the generated distribution
         mainPanel(
-           checkboxInput("show_quadratics", label='Show Quadratic Sections'),
+           checkboxInput("show_quadratics", 
+                         label='Show Quadratic Function Details'),
            plotOutput("fx_plot"),
            tableOutput("coef_table")
         )
@@ -90,23 +91,69 @@ QS_calc = function(x, alpha, P, H, R) {
   
   # calculate thetas
   theta = solve(A,target)
+
+  # calculate thetas
+  theta = solve(A,target)
   
+  # fitted spline
   tmp = (pmax( outer(x,knot,"-") , 0))^2
   
   y = (x >= alpha) * (x <= beta) * R * (tmp %*% theta)  # ASFRs
   
-  delay  = D
-  control= C
-  
-  x  = as.vector(x)
-  fx = as.vector(y)
-  
-  # calculate the a,b,c for each section in  [a x^2 + b x + c] form
-  
-    
-  return(list( x=x, deltax=diff(x)[1], fx=fx, knot=knot, theta=theta, beta=beta))
-} #QS
+  fitted_spline = tibble(x  = x,
+                         fx = as.vector(y))
 
+  tmp   = (pmax( outer(knot,knot,"-") , 0))^2
+  fknot = (knot >= alpha) * (knot <= beta) * R * (tmp %*% theta)  # ASFRs
+
+  knot_info = tibble(x  = c(knot,beta),                    
+                     fx = c(fknot,0),
+                     quadratic = c(paste0('f',1:5), NA))
+
+  # calculate the a,b,c for each section in  [a x^2 + b x + c] form
+  aa =    R * cumsum(theta)
+  bb = -2*R*cumsum(theta*knot)
+  cc =    R*cumsum(theta*knot^2)
+  
+  # make an |x| by 5 data frame with the 5 complete
+  # quadratic functions (each function over the whole
+  # range of x, not just the interval where it *is*
+  # the spline value)
+  
+  fvals = sapply(x, function(z) aa*z^2 + bb*z + cc) %>% 
+    t() %>% 
+    as_tibble() %>% 
+    add_column(x, .before=1)
+  
+  names(fvals) = c('x',paste0('f',1:5))
+  
+  dividers = c(-Inf,knot,beta,Inf)
+  
+  sel = function(x,q) {
+    ok = (q=='f1') & (x >= knot[1]) & (x < knot[2])
+    ok = ok | (q=='f2') & (x >= knot[2]) & (x < knot[3])
+    ok = ok | (q=='f3') & (x >= knot[3]) & (x < knot[4])
+    ok = ok | (q=='f4') & (x >= knot[4]) & (x < knot[5])
+    ok = ok | (q=='f5') & (x >= knot[5]) & (x < beta)
+    return(ok)
+  }
+  
+  fvals = fvals %>% 
+    pivot_longer(cols=starts_with('f'),
+                 names_to='quadratic',
+                 values_to='fx') %>% 
+    mutate(section = cut(x, breaks=dividers),
+           include = sel(x,quadratic))
+
+  
+  return(list( knot          = knot, 
+               theta         = theta, 
+               beta          = beta,
+               deltax        = diff(x)[1],
+               fvals         = fvals,
+               fitted_spline = fitted_spline,
+               knot_info     = knot_info))
+} #QS
 
 
 # Define server logic ----
@@ -129,23 +176,33 @@ server <- function(input, output) {
       )
 
       #computation
-        dividers = c(-Inf,QS()$knot,QS()$beta,Inf)
 
-        model = tibble(x=QS()$x,
-                       fx=QS()$fx,
-                      section=cut(x,breaks=dividers))
+        TFR  = 0.001 * sum( head(QS()$fitted_spline$fx,-1)+
+                            tail(QS()$fitted_spline$fx,-1))/2 * QS()$deltax
+        
+        macb = weighted.mean( QS()$fitted_spline$x, 
+                              QS()$fitted_spline$fx) + QS()$deltax
 
-        TFR  = 0.001 * sum( head(QS()$fx,-1)+tail(QS()$fx,-1))/2 * QS()$deltax
-        macb = weighted.mean( QS()$x, QS()$fx) + QS()$deltax
-
-        info = paste0('TFR = ', sprintf(fmt='%4.2f',TFR),
+        info = paste0('TFR = '       , sprintf(fmt='%4.2f',TFR),
                       '\nMean Age = ', sprintf(fmt='%4.2f',macb))
 
+        selected_data = QS()$fvals
+        
+        if (!(input$show_quadratics)) {
+           selected_data = filter(selected_data, include)  
+        }
+        
+        print(dim(data))
+        
+        selected_size = ifelse(input$show_quadratics,3, 6)
+        
       #plotting
-        G = ggplot(data=model) +
-            aes(x=x,y=fx, color=section) +
-            geom_line(size=5, alpha=.60) +
-            geom_line(aes(x=x,y=fx),size=1.5, color='black') +
+        G = ggplot(data=selected_data) +
+            aes(x=x,y=fx, color=quadratic) +
+            geom_line(size=selected_size, alpha=.60) +
+            geom_line(data=QS()$fitted_spline,
+                      aes(x=x,y=fx),size=1.5, 
+                      color='black', inherit.aes = FALSE) +
             labs(x='Age',y='Fertility Rate per 1000') +
             theme_bw() +
             theme(axis.text  = element_text(size=14,face='bold'),
@@ -162,14 +219,17 @@ server <- function(input, output) {
             geom_text(x=10,y=0.95*input$R, label='R', size=6,color='black') +
             geom_text(x=10,y=0.45*input$R, label='R/2', size=6,color='black') +
             geom_text(x=input$alpha,y=0.05*input$R, label="\u03b1", size=6,color='black') +
-            scale_y_continuous(expand=c(0.02,0.02)) +
+            scale_y_continuous(expand=c(0.02,0.02), limits=c(0,1.20*input$R)) +
             scale_x_continuous(breaks=seq(10,55,5),minor_breaks = NULL) +
             guides(color=FALSE) +
             geom_text(x=45, y=.90*input$R, label=info,
                       hjust=0,color='black', size=6)
 
-
-        print(G)
+       G = G + geom_point(data=QS()$knot_info,
+                          aes(x=x,y=fx),
+                          shape=16, size=8, alpha=.50)
+       
+       print(G)
 
     })
 
