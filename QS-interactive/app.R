@@ -42,6 +42,7 @@ ui <- fluidPage(
 
         # Show a plot of the generated distribution
         mainPanel(
+           checkboxInput("show_quadratics", label='Show Quadratic Sections'),
            plotOutput("fx_plot"),
            tableOutput("coef_table")
         )
@@ -103,12 +104,12 @@ QS_calc = function(x, alpha, P, H, R) {
   # calculate the a,b,c for each section in  [a x^2 + b x + c] form
   
     
-  return(list( x=x, fx=fx, knot=knot, theta=theta, beta=beta))
+  return(list( x=x, deltax=diff(x)[1], fx=fx, knot=knot, theta=theta, beta=beta))
 } #QS
 
 
 
-# Define server logic required to draw a histogram ----
+# Define server logic ----
 server <- function(input, output) {
 
   deltax = .25
