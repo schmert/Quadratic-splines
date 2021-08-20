@@ -1,9 +1,15 @@
 library(shiny)
 library(tidyverse)
+library(bslib)
 
 # Define UI for application that draws a histogram ----
 ui <- fluidPage(
-
+  
+    theme = bslib::bs_theme(
+              bootswatch = "simplex",
+              base_font = font_google('Fira Sans')
+              ),
+  
     # Application title
     titlePanel("Quadratic Spline Fertility Model: What do the parameters do?"),
     titlePanel(HTML("<h6>This app illustrates the Quadratic Spline (QS) model proposed in <a href='https://www.demographic-research.org/volumes/vol9/5/' target=_blank'>Schmertmann (2003)</a></h6>")),

@@ -1,0 +1,7 @@
+{
+    "installOptions": {
+        "installFromRepository": true,
+        "libraryPath": "C:/Users/cschmertmann/Documents/R/R-3.5.3/library",
+        "installDependencies": true
+    }
+}
