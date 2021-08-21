@@ -12,9 +12,9 @@ ui <- fluidPage(
   
     # Application title
     titlePanel("Quadratic Spline Fertility Model: What do the parameters do?"),
-    titlePanel(HTML("<h6>This app illustrates the Quadratic Spline (QS) model proposed in <a href='https://www.demographic-research.org/volumes/vol9/5/' target=_blank'>Schmertmann (2003)</a></h6>")),
-    titlePanel(h6("Colored sections illustrate the piecewise quadratic curves that comprise the spline schedule")),
-    titlePanel(h6("Parameter \u03b1, P, H, and R control the shape and level. Change them to see their effects on the schedule.")),
+    titlePanel(HTML("<h6>This app illustrates the Quadratic Spline (QS) model proposed in <a href='https://www.demographic-research.org/volumes/vol9/5/' target=_blank'>Schmertmann (2003)</a>. 
+                    Colored sections illustrate the piecewise quadratic curves that comprise the spline schedule.</br>
+                    Parameters (\u03b1, P, H, R) control the shape and level. Change them to see their effects on the schedule.</h6>")),
 
     # Sidebar with a slider input for number of bins 
     sidebarLayout(
@@ -23,22 +23,13 @@ ui <- fluidPage(
             sliderInput(inputId='alpha', label=HTML('&alpha; (Initial Age)'), 
                         min=12, max=20, value=15, 
                         step = 0.25 ),
-            # numericInput(inputId = "alpha",  
-            #              HTML("&alpha; (Initial Age)"), value = 14,
-            #              width='75%'),
             sliderInput(inputId='P', label='P (Peak Age)', 
                         min=20, max=48, value=26, 
                         step = 0.25 ),
-            
-            # numericInput(inputId = "P",  
-            #              HTML("P (Peak Age)"), value = 29,
-            #              width='75%'),
             sliderInput(inputId='H', label='H (Half-peak Age)', 
                         min=20, max=48, value=34, 
                         step = 0.25 ),
-            # numericInput(inputId = "H",  
-            #              HTML("H (Half-Peak Age)"), value = 36,
-            #              width='75%'),
+
             h4('LEVEL'),
             numericInput(inputId = "R",  
                          HTML("R per 1000 (Peak Level)"), value = 200,
@@ -48,10 +39,16 @@ ui <- fluidPage(
 
         # Show a plot of the generated distribution
         mainPanel(
-           checkboxInput("show_quadratics", 
-                         label='Show Quadratic Function Details'),
+           fluidRow(
+             checkboxInput("show_coefs", 
+                           label='Show Spline Knots and Coefs'),
+             checkboxInput("show_quadratics", 
+                           label='Plot All Quadratic Functions')
+           ),
+           
+           tableOutput("coef_table"),
+           
            plotOutput("fx_plot"),
-           tableOutput("coef_table")
         )
     )
 )
@@ -173,7 +170,24 @@ server <- function(input, output) {
                             input$H, 
                             input$R) )
   
-
+  output$coef_table = renderTable({ 
+    
+    if (input$show_coefs) {
+      knot_text = sprintf('% .3f',c(QS()$knot, QS()$beta))
+      coef_text = c(sprintf('%+.3f', QS()$theta) , '--')
+      
+      tab        = rbind('Knot'=knot_text, 
+                         'Coef'=coef_text)  %>% 
+                    as_tibble()
+      names(tab) = paste(0:5)
+      vnames = c('Knot (t)','Coef (&#x3B8;)')
+      tab        = add_column(tab, 'Variable'=vnames, .before=1)
+      
+      tab    
+    } # if tshow_coefs
+  }, align='r',sanitize.text.function = function(x) x   
+  )
+  
     output$fx_plot <- renderPlot({
 
       shiny::validate(
@@ -200,7 +214,7 @@ server <- function(input, output) {
         
         print(dim(data))
         
-        selected_size = ifelse(input$show_quadratics,3, 6)
+        selected_size = ifelse(input$show_quadratics,3.5, 6)
         
       #plotting
         G = ggplot(data=selected_data) +
@@ -241,14 +255,7 @@ server <- function(input, output) {
 
 
     
-    output$coef_table = renderTable({ 
-      df = tibble( 
-        k     = format( c(0,seq( QS()$knot )), digits=0),
-        Knot  = sprintf('%.3f',c( QS()$knot, QS()$beta)), 
-        Coef =  c(sprintf('%+.4f', QS()$theta), '--'))
-      
-      df
-      })
+
   
 }
 
