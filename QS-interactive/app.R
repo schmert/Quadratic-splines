@@ -131,8 +131,8 @@ ui <- fluidPage(
     # Application title
     titlePanel("Quadratic Spline Fertility Model: What do the parameters do?"),
     titlePanel(HTML("<h6>This app illustrates the Quadratic Spline (QS) model proposed in <a href='https://www.demographic-research.org/volumes/vol9/5/' target=_blank'>Schmertmann (2003)</a>. 
-                    Colored sections illustrate the piecewise quadratic curves that comprise the spline schedule.</br>
-                    Parameters (\u03b1, P, H, R) control the shape and level. Change them to see their effects on the schedule.</h6>")),
+                     Colored sections illustrate the piecewise quadratic curves that comprise the spline schedule.
+                     Parameters (\u03b1, P, H, R) control the shape and level. Change them to see their effects on the schedule.</h6>")),
 
     # Sidebar with a slider input for number of bins 
     sidebarLayout(
@@ -161,12 +161,12 @@ ui <- fluidPage(
              checkboxInput("show_coefs", 
                            label='Show Spline Knots and Coefs'),
              checkboxInput("show_quadratics", 
-                           label='Plot All Quadratic Functions')
+                           label='Plot Quadratic Functions over Whole Range')
            ),
            
            fluidRow(
-             tableOutput("coef_table"),
-             textOutput("latex_eq")
+             column(width=3, tableOutput("coef_table")),
+             column(width=2,offset=5, uiOutput("latex_eq"))
            ),
            
            plotOutput("fx_plot")
@@ -199,16 +199,19 @@ server <- function(input, output) {
                          'Coef'=coef_text)  %>% 
                     as_tibble()
       names(tab) = paste(0:5)
-      vnames = c('Knot (t)','Coef (&#x3B8;)')
+      vnames = c('Knot (t)', paste0('Coef (',HTML('\u03b8'),')'))
       tab        = add_column(tab, 'Variable'=vnames, .before=1)
       
       tab    
     } # if tshow_coefs
-  }, align='r'   
+  }, align='r' 
   )
   
-    output$latex_eq <- renderText({
-           '-- equation here --'
+    output$latex_eq <- renderUI({
+      if (input$show_coefs) {
+      withMathJax('$$\\quad\\text{QS function over }[\\alpha=t_0, \\beta=t_5]: \\\\
+                 f(x)\\,=\\,R\\,\\sum_{k=0}^4 \\theta_k\\:I(x>t_k)\\:(x-t_k)^2  $$')
+      } # if  
     })
   
     output$fx_plot <- renderPlot({

@@ -5,9 +5,9 @@ account: schmertmann
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 4503426
-bundleId: 4948493
+bundleId: 4950600
 url: https://schmertmann.shinyapps.io/QS-interactive/
-when: 1629562146.26491
-lastSyncTime: 1629562146.26591
+when: 1629644438.88363
+lastSyncTime: 1629644438.88363
 asMultiple: FALSE
 asStatic: FALSE
